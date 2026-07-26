@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>NodeChat</title>
+</head>
+<body>
+
+<h1>NodeChat</h1>
+
+<p id="status">Connexion...</p>
+
+Pseudo :
+<input id="pseudo" value="Invité">
+
+<br><br>
+
+<div id="chat" style="height:400px;overflow-y:auto;border:1px solid black;padding:10px;"></div>
+
+<br>
+
+<input id="message" placeholder="Votre message..." style="width:300px;">
+
+<button onclick="envoyer()">
+Envoyer
+</button>
+
+<script>
+
+const URL = "https://soup-comply-transit-accessories.trycloudflare.com";
+
+let ws;
+
+const chat = document.getElementById("chat");
+const status = document.getElementById("status");
+
+function ajouterMessage(message, date){
+
+    let heure = "";
+
+    if(date){
+
+        heure = new Date(date).toLocaleTimeString("fr-FR",{
+            hour:"2-digit",
+            minute:"2-digit"
+        });
+
+    }
+
+    chat.innerHTML += `
+        <div>
+            ${message}
+            ${heure ? "<small>(" + heure + ")</small>" : ""}
+        </div>
+    `;
+
+    chat.scrollTop = chat.scrollHeight;
+
+}
+
+function connecter(){
+
+    ws = new WebSocket(URL);
+
+    ws.onopen = ()=>{
+
+        status.innerHTML = "🟢 Connecté";
+
+    };
+
+    ws.onclose = ()=>{
+
+        status.innerHTML = "🔴 Déconnecté";
+
+        setTimeout(connecter,2000);
+
+    };
+
+    ws.onerror = ()=>{
+
+        console.log("Erreur WebSocket");
+
+    };
+
+    ws.onmessage = (event)=>{
+
+        let packet = JSON.parse(event.data);
+
+        if(packet.type === "history"){
+
+            chat.innerHTML = "";
+
+            packet.data.forEach(message=>{
+
+                ajouterMessage(message.text,message.date);
+
+            });
+
+        }
+
+        if(packet.type === "message"){
+
+            ajouterMessage(packet.data.text,packet.data.date);
+
+        }
+
+    };
+
+}
+
+connecter();
+
+function envoyer(){
+
+    if(ws.readyState !== WebSocket.OPEN){
+
+        alert("Pas connecté au serveur");
+
+        return;
+
+    }
+
+    let pseudo = document.getElementById("pseudo").value.trim();
+
+    let message = document.getElementById("message").value.trim();
+
+    if(message === "") return;
+
+    ws.send("<b>"+pseudo+"</b> : "+message);
+
+    document.getElementById("message").value = "";
+
+}
+
+document.getElementById("message").addEventListener("keydown",(e)=>{
+
+    if(e.key==="Enter"){
+
+        envoyer();
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
