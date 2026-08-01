@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+
+<meta charset="UTF-8">
+<title>Panel Minecraft</title>
+
+<style>
+
+body {
+    background:#111;
+    color:white;
+    font-family:Arial,sans-serif;
+    display:flex;
+    justify-content:center;
+    padding:30px;
+}
+
+.card {
+
+    background:#222;
+    width:450px;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 20px black;
+
+}
+
+h1,h2,h3 {
+    text-align:center;
+}
+
+.online {
+    color:#00ff55;
+}
+
+.offline {
+    color:#ff3333;
+}
+
+.box {
+
+    background:#151515;
+    padding:10px;
+    border-radius:10px;
+    margin-top:10px;
+
+}
+
+.player,
+.message {
+
+    padding:5px;
+    border-bottom:1px solid #333;
+
+}
+
+.chat {
+
+    height:220px;
+    overflow-y:auto;
+
+}
+
+button {
+
+    width:100%;
+    padding:10px;
+    margin:5px 0;
+    border:none;
+    border-radius:8px;
+    background:#333;
+    color:white;
+    cursor:pointer;
+    font-size:16px;
+
+}
+
+button:hover {
+
+    background:#555;
+
+}
+
+input {
+
+    width:100%;
+    padding:8px;
+    margin:5px 0;
+    border-radius:5px;
+    border:none;
+
+}
+
+.result {
+
+    color:#aaa;
+    margin-top:10px;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="card">
+
+
+<h1>⛏️ Minecraft</h1>
+
+
+<h2 id="status">
+Connexion...
+</h2>
+
+
+
+<p>
+Version :
+<span id="version">-</span>
+</p>
+
+
+<p>
+MOTD :
+<span id="motd">-</span>
+</p>
+
+
+<p>
+Joueurs :
+<span id="count">-</span>
+</p>
+
+
+
+<h3>👤 Joueurs connectés</h3>
+
+
+<div class="box" id="playerList">
+Aucun joueur
+</div>
+
+
+
+<hr>
+
+
+<h2>💬 Chat Minecraft</h2>
+
+
+<div class="box chat" id="chat">
+
+Aucun message
+
+</div>
+
+
+
+<h3>Envoyer un message</h3>
+
+
+<input id="chatUsername"
+placeholder="Pseudo"
+value="Web">
+
+
+<input id="chatMessage"
+placeholder="Message">
+
+
+<button onclick="sendChat()">
+📨 Envoyer dans Minecraft
+</button>
+
+
+<div class="result" id="result"></div>
+
+
+
+<hr>
+
+
+
+<h2>🎮 Commandes</h2>
+
+
+<button onclick="sendCommand('time set day')">
+☀️ Jour
+</button>
+
+
+<button onclick="sendCommand('time set night')">
+🌙 Nuit
+</button>
+
+
+<button onclick="sendCommand('weather clear')">
+☁️ Clair
+</button>
+
+
+<button onclick="sendCommand('weather rain')">
+🌧️ Pluie
+</button>
+
+
+
+<hr>
+
+
+
+<h2>💎 Donner un objet</h2>
+
+
+<input id="player"
+placeholder="Pseudo">
+
+
+<input id="item"
+placeholder="Objet">
+
+
+<input id="amount"
+value="1"
+placeholder="Quantité">
+
+
+<button onclick="giveItem()">
+Donner
+</button>
+
+
+
+</div>
+
+
+
+
+<script>
+
+
+const API =
+"https://bearing-cardiovascular-installing-employment.trycloudflare.com";
+
+
+
+// =====================
+// Statut serveur
+// =====================
+
+
+async function updateServer(){
+
+
+try{
+
+
+let response =
+await fetch(API+"/status");
+
+
+let data =
+await response.json();
+
+
+
+let status =
+document.getElementById("status");
+
+
+
+if(data.online){
+
+
+status.innerHTML =
+"🟢 Serveur en ligne";
+
+status.className =
+"online";
+
+
+
+document.getElementById("version").textContent =
+data.version;
+
+
+document.getElementById("motd").textContent =
+data.motd;
+
+
+document.getElementById("count").textContent =
+data.players.online+
+"/"+
+data.players.max;
+
+
+
+let list =
+document.getElementById("playerList");
+
+
+list.innerHTML="";
+
+
+
+if(data.players.list.length===0){
+
+list.innerHTML="Aucun joueur";
+
+}
+else{
+
+
+data.players.list.forEach(p=>{
+
+
+let div =
+document.createElement("div");
+
+
+div.className="player";
+
+
+div.textContent =
+"👤 "+p;
+
+
+list.appendChild(div);
+
+
+});
+
+
+}
+
+
+
+}
+else{
+
+
+status.innerHTML =
+"🔴 Serveur hors ligne";
+
+status.className =
+"offline";
+
+
+}
+
+
+}
+catch(e){
+
+document.getElementById("status").innerHTML =
+"⚠️ API inaccessible";
+
+}
+
+
+}
+
+
+
+// =====================
+// Chat Minecraft -> Site
+// =====================
+
+
+async function updateChat(){
+
+
+try{
+
+
+let response =
+await fetch(API+"/chatlog");
+
+
+let data =
+await response.json();
+
+
+
+let chat =
+document.getElementById("chat");
+
+
+chat.innerHTML="";
+
+
+
+if(data.messages.length===0){
+
+chat.innerHTML =
+"Aucun message";
+
+}
+else{
+
+
+data.messages.forEach(msg=>{
+
+
+let div =
+document.createElement("div");
+
+
+div.className =
+"message";
+
+
+div.textContent =
+msg;
+
+
+chat.appendChild(div);
+
+
+});
+
+
+}
+
+
+
+chat.scrollTop =
+chat.scrollHeight;
+
+
+
+}
+catch(e){
+
+
+
+}
+
+
+
+}
+
+
+
+// =====================
+// Site -> Minecraft
+// =====================
+
+
+async function sendChat(){
+
+
+let username =
+document.getElementById("chatUsername")
+.value.trim();
+
+
+
+let message =
+document.getElementById("chatMessage")
+.value.trim();
+
+
+
+if(message==="")
+return;
+
+
+
+let response =
+await fetch(API+"/chat",{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+username:username,
+
+message:message
+
+})
+
+});
+
+
+
+let data =
+await response.json();
+
+
+
+document.getElementById("result").textContent =
+data.success
+?
+"✅ Message envoyé"
+:
+"❌ "+data.error;
+
+
+
+document.getElementById("chatMessage").value="";
+
+
+}
+
+
+
+// =====================
+// Commandes
+// =====================
+
+
+async function sendCommand(command){
+
+
+await fetch(API+"/command",{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+command:command
+
+})
+
+});
+
+
+}
+
+
+
+// =====================
+// Give
+// =====================
+
+
+function giveItem(){
+
+
+let player =
+document.getElementById("player").value;
+
+
+let item =
+document.getElementById("item").value;
+
+
+let amount =
+document.getElementById("amount").value;
+
+
+
+sendCommand(
+"give "+player+" "+item+" "+amount
+);
+
+
+}
+
+
+
+
+updateServer();
+
+updateChat();
+
+
+
+setInterval(updateServer,5000);
+
+setInterval(updateChat,1000);
+
+
+</script>
+
+
+</body>
+</html>
