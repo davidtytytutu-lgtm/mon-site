@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>DavidBot AI</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+
+body{
+
+    margin:0;
+
+    min-height:100vh;
+
+    background:
+    radial-gradient(circle,#333,#111);
+
+    color:white;
+
+    font-family:"Press Start 2P", monospace;
+
+}
+
+
+
+.container{
+
+    width:750px;
+
+    max-width:95%;
+
+    margin:30px auto;
+
+}
+
+
+
+
+h1{
+
+    text-align:center;
+
+    font-size:22px;
+
+}
+
+
+
+
+
+.banner{
+
+    display:flex;
+
+    justify-content:center;
+
+    margin:20px 0;
+
+}
+
+
+
+.banner img{
+
+    max-width:100%;
+
+    border-radius:10px;
+
+}
+
+
+
+
+
+#chat{
+
+    height:550px;
+
+    overflow-y:auto;
+
+    background:#080808;
+
+    border:3px solid #333;
+
+    border-radius:15px;
+
+    padding:20px;
+
+}
+
+
+
+
+
+.message{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:12px;
+
+    margin:20px 0;
+
+    animation:show .3s;
+
+}
+
+
+
+
+
+.avatar{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:8px;
+
+    overflow:hidden;
+
+    flex-shrink:0;
+
+}
+
+
+
+.avatar img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    image-rendering:pixelated;
+
+}
+
+
+
+
+
+.text{
+
+    max-width:75%;
+
+    padding:14px;
+
+    border-radius:8px;
+
+    background:#333;
+
+    font-size:11px;
+
+    line-height:1.8;
+
+    white-space:pre-wrap;
+
+}
+
+
+
+
+
+.ai .text{
+
+    background:#333;
+
+}
+
+
+
+
+.user{
+
+    justify-content:flex-end;
+
+}
+
+
+
+.user .avatar{
+
+    order:2;
+
+}
+
+
+
+.user .text{
+
+    background:#2563eb;
+
+}
+
+
+
+
+
+.typing{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:4px;
+
+}
+
+
+
+.typing span{
+
+    animation:dots 1s infinite;
+
+}
+
+
+
+.typing span:nth-child(2){
+
+    animation-delay:.2s;
+
+}
+
+
+
+.typing span:nth-child(3){
+
+    animation-delay:.4s;
+
+}
+
+
+
+
+
+.bar{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-top:20px;
+
+}
+
+
+
+input{
+
+    flex:1;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    border:3px solid #333;
+
+    background:#181818;
+
+    color:white;
+
+    outline:none;
+
+    font-family:"Press Start 2P", monospace;
+
+    font-size:11px;
+
+    transition:.3s;
+
+}
+
+
+
+input:hover,
+
+input:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:0 0 10px #2563eb;
+
+}
+
+
+
+
+
+button{
+
+    padding:15px 20px;
+
+    border-radius:12px;
+
+    border:3px solid #111;
+
+    background:#2563eb;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-family:"Press Start 2P", monospace;
+
+    transition:.3s;
+
+}
+
+
+
+button:hover{
+
+    transform:scale(1.1) translateY(-3px);
+
+    box-shadow:
+
+    0 0 15px #2563eb;
+
+}
+
+
+
+button:disabled{
+
+    opacity:.5;
+
+}
+
+
+
+
+
+.bottom-image{
+
+    display:flex;
+
+    justify-content:center;
+
+    margin-top:25px;
+
+}
+
+
+
+
+
+.bottom-image img{
+
+    width:180px;
+
+    padding:8px;
+
+    background:#222;
+
+    border:4px solid #555;
+
+    border-radius:12px;
+
+    image-rendering:pixelated;
+
+    box-shadow:
+
+    0 0 0 3px #111,
+
+    0 0 15px black;
+
+    transition:.3s;
+
+}
+
+
+
+
+
+.bottom-image img:hover{
+
+    transform:
+
+    scale(1.12)
+
+    rotate(-2deg);
+
+
+    box-shadow:
+
+    0 0 15px #2563eb,
+
+    0 0 30px #2563eb;
+
+}
+
+
+
+
+
+
+@keyframes dots{
+
+0%,100%{
+
+    opacity:.2;
+
+}
+
+
+50%{
+
+    opacity:1;
+
+}
+
+}
+
+
+
+
+@keyframes show{
+
+
+from{
+
+    opacity:0;
+
+    transform:translateY(15px);
+
+}
+
+
+to{
+
+    opacity:1;
+
+}
+
+}
+
+
+
+
+@media(max-width:700px){
+
+
+.bar{
+
+    flex-direction:column;
+
+}
+
+
+
+button,
+
+input{
+
+    width:100%;
+
+}
+
+
+}
+
+
+
+</style>
+
+</head>
+
+
+
+<body>
+
+
+<div class="container">
+
+
+
+<h1>
+🤖 DavidBot AI
+</h1>
+
+
+
+<div class="banner">
+
+<a href="https://ransei.neocities.org/" target="_blank">
+
+<img src="https://ransei.neocities.org//assets/img/embeded.gif">
+
+</a>
+
+</div>
+
+
+
+
+
+<div id="chat"></div>
+
+
+
+
+<div class="bar">
+
+
+<input id="message" placeholder="Écris un message...">
+
+
+<button id="send">
+
+OK
+
+</button>
+
+
+</div>
+
+
+
+
+<div class="bottom-image">
+
+<img src="https://raw.githubusercontent.com/davidtytytutu-lgtm/mon-site/refs/heads/main/code.png">
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+<script>
+
+
+const URL_CHAT =
+"https://publish-leisure-matrix-binding.trycloudflare.com/chat";
+
+
+
+const USER_IMAGE =
+"https://raw.githubusercontent.com/davidtytytutu-lgtm/mon-site/refs/heads/main/photot.png";
+
+
+const AI_IMAGE =
+"https://raw.githubusercontent.com/davidtytytutu-lgtm/mon-site/refs/heads/main/photot%202%20.png";
+
+
+
+const chat=document.getElementById("chat");
+
+const input=document.getElementById("message");
+
+const button=document.getElementById("send");
+
+
+
+
+
+function avatar(url){
+
+return `
+
+<div class="avatar">
+
+<img src="${url}">
+
+</div>
+
+`;
+
+}
+
+
+
+
+
+function addMessage(text,type){
+
+
+const box=document.createElement("div");
+
+
+box.className="message "+type;
+
+
+
+box.innerHTML=
+
+`
+
+${avatar(type==="ai"?AI_IMAGE:USER_IMAGE)}
+
+<div class="text"></div>
+
+`;
+
+
+
+box.querySelector(".text").textContent=text;
+
+
+
+chat.appendChild(box);
+
+
+chat.scrollTop=chat.scrollHeight;
+
+
+}
+
+
+
+
+
+async function sendMessage(){
+
+
+let text=input.value.trim();
+
+
+if(!text)return;
+
+
+
+button.disabled=true;
+
+input.disabled=true;
+
+
+
+addMessage(text,"user");
+
+
+input.value="";
+
+
+
+
+const box=document.createElement("div");
+
+
+box.className="message ai";
+
+
+
+box.innerHTML=
+
+`
+
+${avatar(AI_IMAGE)}
+
+<div class="text typing">
+
+DavidBot réfléchit<span>.</span><span>.</span><span>.</span>
+
+</div>
+
+`;
+
+
+
+chat.appendChild(box);
+
+
+
+const aiText=box.querySelector(".text");
+
+
+let first=true;
+
+
+
+try{
+
+
+const response=await fetch(URL_CHAT,{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+message:text
+
+})
+
+});
+
+
+
+const reader=response.body.getReader();
+
+const decoder=new TextDecoder();
+
+
+
+while(true){
+
+
+const {done,value}=await reader.read();
+
+
+if(done)break;
+
+
+
+const chunk=decoder.decode(value);
+
+
+
+for(const line of chunk.split("\n")){
+
+
+if(!line.startsWith("data:"))
+continue;
+
+
+
+const json=JSON.parse(line.replace("data: ",""));
+
+
+
+if(json.token){
+
+
+if(first){
+
+aiText.classList.remove("typing");
+
+aiText.innerHTML="";
+
+first=false;
+
+}
+
+
+aiText.textContent+=json.token;
+
+
+chat.scrollTop=chat.scrollHeight;
+
+
+}
+
+
+}
+
+
+}
+
+
+
+}
+
+catch(e){
+
+
+aiText.classList.remove("typing");
+
+
+aiText.textContent="Erreur : "+e.message;
+
+
+}
+
+
+
+
+button.disabled=false;
+
+input.disabled=false;
+
+input.focus();
+
+
+}
+
+
+
+
+
+button.onclick=sendMessage;
+
+
+input.addEventListener("keydown",e=>{
+
+if(e.key==="Enter")
+sendMessage();
+
+});
+
+
+</script>
+
+
+</body>
+
+</html>
