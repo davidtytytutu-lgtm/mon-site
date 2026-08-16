@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>NodeChat</title>
+
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+
+/* ===== FOND ===== */
+
+body{
+
+    margin:0;
+
+    min-height:100vh;
+
+    background-image:url("https://raw.githubusercontent.com/davidtytytutu-lgtm/code/refs/heads/main/Modded%20MC.jpg");
+
+    background-size:cover;
+
+    background-position:center;
+
+    background-attachment:fixed;
+
+
+    font-family:"Segoe UI",Arial,sans-serif;
+
+    color:white;
+
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+
+    overflow:hidden;
+
+}
+
+
+/* couche sombre + contraste */
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+
+    linear-gradient(
+        rgba(0,0,0,0.45),
+        rgba(0,0,0,0.65)
+    );
+
+    backdrop-filter:blur(4px);
+
+    z-index:-1;
+
+}
+
+
+
+/* ===== BOITE PRINCIPALE ===== */
+
+
+.box{
+
+    width:600px;
+
+    min-height:450px;
+
+
+    padding:40px;
+
+
+    background:
+
+    rgba(30,31,34,0.75);
+
+
+    backdrop-filter:
+
+    blur(18px);
+
+
+
+    border-radius:25px;
+
+
+
+    border:
+
+    1px solid rgba(255,255,255,0.15);
+
+
+
+    box-shadow:
+
+    0 20px 60px rgba(0,0,0,0.5);
+
+
+
+}
+
+
+
+/* ===== TITRES ===== */
+
+
+h1{
+
+    font-size:36px;
+
+    text-align:center;
+
+    margin-bottom:30px;
+
+}
+
+
+
+
+
+/* ===== INPUT ===== */
+
+
+input{
+
+
+    width:100%;
+
+
+    padding:15px;
+
+
+    margin:10px 0;
+
+
+    background:
+
+    rgba(255,255,255,0.08);
+
+
+    color:white;
+
+
+    border:
+
+    1px solid rgba(255,255,255,0.15);
+
+
+    border-radius:12px;
+
+
+    outline:none;
+
+
+
+}
+
+
+
+input:focus{
+
+
+    border-color:#5865f2;
+
+
+    background:
+
+    rgba(255,255,255,0.15);
+
+
+}
+
+
+
+
+
+
+/* ===== BOUTONS HUB ===== */
+
+
+button{
+
+
+    width:100%;
+
+
+    padding:15px;
+
+
+    margin:10px 0;
+
+
+
+    background:
+
+    rgba(88,101,242,0.9);
+
+
+
+    color:white;
+
+
+    border:none;
+
+
+    border-radius:15px;
+
+
+
+    font-size:16px;
+
+
+    font-weight:bold;
+
+
+
+    cursor:pointer;
+
+
+
+    transition:0.25s;
+
+
+}
+
+
+
+button:hover{
+
+
+    transform:
+
+    translateY(-3px);
+
+
+
+    background:#4752c4;
+
+
+
+    box-shadow:
+
+    0 10px 25px rgba(88,101,242,0.4);
+
+
+}
+
+
+
+
+
+/* ===== HUB ===== */
+
+
+
+<div class="box" id="hubPage" style="display:none;">
+#hubPage{
+
+
+    width:700px;
+
+
+    min-height:550px;
+
+
+}
+
+
+
+#welcome{
+
+
+    text-align:center;
+
+
+    font-size:18px;
+
+
+    color:#ccc;
+
+
+    margin-bottom:30px;
+
+
+}
+
+
+
+
+
+
+/* ===== CHAT ===== */
+
+
+#messages{
+
+
+    height:350px;
+
+
+    overflow-y:auto;
+
+
+
+    padding:20px;
+
+
+
+    background:
+
+    rgba(0,0,0,0.25);
+
+
+
+    border-radius:15px;
+
+
+}
+
+
+
+.msg{
+
+
+    background:
+
+    rgba(255,255,255,0.08);
+
+
+
+    padding:12px;
+
+
+    border-radius:12px;
+
+
+    margin-bottom:10px;
+
+
+}
+
+
+/* ===== BUY ME A COFFEE ===== */
+
+
+.coffee{
+
+    position:relative;
+
+    display:block;
+
+
+    margin-top:25px;
+
+
+    padding:15px 35px;
+
+
+    color:white;
+
+
+    font-family:"Courier New",monospace;
+
+
+    font-size:18px;
+
+
+    font-weight:bold;
+
+
+    text-decoration:none;
+
+
+
+    background:#222;
+
+
+    border:2px solid #8b5a2b;
+
+
+    border-radius:12px;
+
+
+
+    box-shadow:
+
+    0 0 10px rgba(139,90,43,0.5),
+
+    inset 0 0 10px rgba(0,0,0,0.8);
+
+
+
+    transition:0.3s;
+
+
+    overflow:hidden;
+
+
+}
+
+
+
+/* reflet lumineux */
+
+
+.coffee::before{
+
+
+    content:"";
+
+
+    position:absolute;
+
+
+    top:0;
+
+
+    left:-100%;
+
+
+    width:100%;
+
+
+    height:100%;
+
+
+
+    background:
+
+    linear-gradient(
+
+        120deg,
+
+        transparent,
+
+        rgba(255,255,255,0.25),
+
+        transparent
+
+    );
+
+
+
+    transition:0.5s;
+
+
+}
+
+
+
+
+.coffee:hover::before{
+
+
+    left:100%;
+
+
+}
+
+
+
+
+.coffee:hover{
+
+
+    transform:scale(1.08);
+
+
+
+    border-color:#d49a4a;
+
+
+
+    box-shadow:
+
+
+    0 0 20px #d49a4a,
+
+
+    inset 0 0 15px black;
+
+
+}
+
+
+
+
+
+.coffee:active{
+
+
+    transform:scale(0.95);
+
+
+}
+
+</style>
+
+
+</head>
+
+
+
+<body>
+
+
+
+
+<!-- LOGIN -->
+
+
+<div class="box" id="loginPage">
+
+
+<h1>
+💬 NodeChat
+</h1>
+
+
+<input id="loginUser" placeholder="Pseudo">
+
+
+<input id="loginPass" type="password" placeholder="Mot de passe">
+
+
+<button onclick="login()">
+Connexion
+</button>
+
+<button onclick="showSignup()">
+Créer un compte
+</button>
+
+
+
+<p id="loginInfo"></p>
+
+
+</div>
+
+
+
+
+
+
+<!-- SIGNUP -->
+
+
+<div class="box" id="signupPage" style="display:none;">
+
+
+<h1>
+Créer un compte
+</h1>
+
+
+
+<input id="signupUser" placeholder="Pseudo">
+
+
+<input id="signupPass" type="password" placeholder="Mot de passe">
+
+
+<button onclick="signup()">
+Créer
+</button>
+
+
+
+<button onclick="showLogin()">
+Retour
+</button>
+
+
+<p id="signupInfo"></p>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- CHAT -->
+
+
+<div class="box" id="chatPage" style="display:none;">
+
+
+<h1>
+💬 NodeChat
+</h1>
+
+
+<p id="userDisplay"></p>
+
+
+<div id="messages"></div>
+
+
+
+<input id="message" placeholder="Votre message...">
+
+
+<button onclick="sendMessage()">
+Envoyer
+</button>
+
+</div>
+
+<script>
+
+
+
+const URL = 
+"https://determines-somerset-bearing-dreams.trycloudflare.com/";
+
+
+
+let ws;
+
+let username = "";
+
+
+
+
+
+const loginPage=document.getElementById("loginPage");
+
+const signupPage=document.getElementById("signupPage");
+
+const chatPage=document.getElementById("chatPage");
+
+const messages=document.getElementById("messages");
+
+
+
+
+
+
+// ======================
+// CONNEXION WEBSOCKET
+// ======================
+
+
+function connect(){
+
+
+    ws = new WebSocket(URL);
+
+
+
+    ws.onopen=()=>{
+
+        console.log("🟢 Connecté serveur");
+
+    };
+
+
+
+
+    ws.onclose=()=>{
+
+
+        console.log("🔴 Déconnecté");
+
+
+    };
+
+
+
+
+
+
+    ws.onmessage=(event)=>{
+
+
+        let data=JSON.parse(event.data);
+
+
+
+
+
+
+        // LOGIN
+
+
+        if(data.type==="login"){
+
+
+
+            if(data.data.success){
+
+
+
+                username=data.data.username;
+
+
+                openChat();
+
+
+            }
+
+
+            else{
+
+
+                loginInfo.innerHTML=data.data.message;
+
+
+            }
+
+
+        }
+
+
+
+
+
+
+
+        // SIGNUP
+
+
+        if(data.type==="signup"){
+
+
+            signupInfo.innerHTML=data.data.message;
+
+
+        }
+
+
+
+
+
+
+
+        // HISTORIQUE
+
+
+        if(data.type==="history"){
+
+
+
+            messages.innerHTML="";
+
+
+
+            data.data.forEach(msg=>{
+
+
+                afficherMessage(msg);
+
+
+
+            });
+
+
+        }
+
+
+
+
+
+
+
+
+        // NOUVEAU MESSAGE
+
+
+        if(data.type==="message"){
+
+
+
+            afficherMessage(data.data);
+
+
+
+        }
+
+
+
+
+
+    };
+
+
+
+}
+
+
+
+
+
+connect();
+
+
+
+
+
+
+
+
+// ======================
+// LOGIN
+// ======================
+
+
+function login(){
+
+
+    ws.send(JSON.stringify({
+
+
+        type:"login",
+
+
+        username:
+        loginUser.value,
+
+
+        password:
+        loginPass.value
+
+
+
+    }));
+
+
+
+}
+
+
+
+
+
+
+
+// ======================
+// SIGNUP
+// ======================
+
+
+function signup(){
+
+
+
+    ws.send(JSON.stringify({
+
+
+        type:"signup",
+
+
+        username:
+        signupUser.value,
+
+
+        password:
+        signupPass.value
+
+
+
+    }));
+
+
+
+}
+
+
+
+
+
+
+
+// ======================
+// OUVRIR CHAT
+// ======================
+
+
+function openChat(){
+
+
+
+    loginPage.style.display="none";
+
+
+    signupPage.style.display="none";
+
+
+    chatPage.style.display="block";
+
+
+    userDisplay.innerHTML=
+    "Connecté : "+username;
+
+
+
+}
+
+
+
+
+
+
+
+function showSignup(){
+
+
+    loginPage.style.display="none";
+
+
+    signupPage.style.display="block";
+
+
+}
+
+
+
+
+
+
+function showLogin(){
+
+
+    signupPage.style.display="none";
+
+
+    loginPage.style.display="block";
+
+
+}
+
+
+
+
+
+
+
+
+// ======================
+// MESSAGE
+// ======================
+
+
+function sendMessage(){
+
+
+
+    let text =
+    message.value.trim();
+
+
+
+    if(text==="") return;
+
+
+
+
+    ws.send(JSON.stringify({
+
+
+        type:"message",
+
+
+        text:text
+
+
+
+    }));
+
+
+
+    message.value="";
+
+
+
+}
+
+
+
+
+
+
+
+function afficherMessage(msg){
+
+
+
+    messages.innerHTML += `
+
+
+    <div class="msg">
+
+
+    <b>${msg.username}</b>
+
+
+    <br>
+
+
+    ${msg.text}
+
+
+    <br>
+
+
+    <small>
+    ${new Date(msg.date).toLocaleTimeString()}
+    </small>
+
+
+    </div>
+
+
+
+    `;
+
+
+
+    messages.scrollTop=
+    messages.scrollHeight;
+
+
+
+}
+
+
+
+</script>
+
+
+</body>
+
+</html>
